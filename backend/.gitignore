@@ -1,0 +1,17 @@
+# Backend dependencies
+backend/node_modules/
+
+# Frontend dependencies
+frontend/node_modules/
+
+# Environment files — contains secrets, never push these
+backend/.env
+frontend/.env
+.env
+
+# Frontend build
+frontend/build/
+
+# OS files
+.DS_Store
+Thumbs.db
