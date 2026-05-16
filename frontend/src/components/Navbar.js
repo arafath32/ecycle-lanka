@@ -50,12 +50,14 @@ const Navbar = () => {
         {/* Desktop nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
           <Link to="/browse" style={navLinkStyle('/browse')}>Browse</Link>
-          {isAuthenticated && (
-            <>
-              <Link to="/post-item" style={navLinkStyle('/post-item')}>+ List Item</Link>
-              <Link to="/dashboard" style={navLinkStyle('/dashboard')}>Dashboard</Link>
-            </>
-          )}
+            <Link to="/requests" style={navLinkStyle('/requests')}>📋 Requests</Link>
+            {isAuthenticated && (
+              <>
+                <Link to="/post-item" style={navLinkStyle('/post-item')}>+ List Item</Link>
+                <Link to="/dashboard" style={navLinkStyle('/dashboard')}>Dashboard</Link>
+                <Link to="/my-requests" style={navLinkStyle('/my-requests')}>My Requests</Link>
+              </>
+            )}
           {isAdmin && <Link to="/admin" style={navLinkStyle('/admin')}>Admin</Link>}
         </div>
 

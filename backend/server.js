@@ -46,6 +46,9 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/api/admin', adminRoutes);
 
+const requestRoutes = require('./routes/requestRoutes');
+app.use('/api/requests', requestRoutes);
+
 // We tell express to use authRoutes for any URL starting with /api/auth
 // So /api/auth/register and /api/auth/login are now active.
 // Grouping under /api/ is a best practice — it separates API from frontend URLs.

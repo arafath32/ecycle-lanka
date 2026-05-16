@@ -13,12 +13,18 @@ import ItemDetail from './pages/ItemDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
+// Request Board Pages ← NEW
+import RequestBoard from './pages/RequestBoard';
+import RequestDetail from './pages/RequestDetail';
+
 // User Pages
 import Dashboard from './pages/user/Dashboard';
 import PostItem from './pages/user/PostItem';
 import EditItem from './pages/user/EditItem';
 import MyListings from './pages/user/MyListings';
 import Profile from './pages/user/Profile';
+import PostRequest from './pages/user/PostRequest';
+import MyRequests from './pages/user/MyRequests';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -40,12 +46,18 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
+            {/* Request Board — public to browse, login to post */}
+            <Route path="/requests" element={<RequestBoard />} />
+            <Route path="/requests/:id" element={<RequestDetail />} />
+
             {/* User (auth required) */}
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/post-item" element={<PrivateRoute><PostItem /></PrivateRoute>} />
             <Route path="/edit-item/:id" element={<PrivateRoute><EditItem /></PrivateRoute>} />
             <Route path="/my-listings" element={<PrivateRoute><MyListings /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+            <Route path="/post-request" element={<PrivateRoute><PostRequest /></PrivateRoute>} />
+            <Route path="/my-requests" element={<PrivateRoute><MyRequests /></PrivateRoute>} />
 
             {/* Admin only */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
