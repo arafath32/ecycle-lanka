@@ -12,6 +12,7 @@ const {
   toggleUserStatus,
   adminDeleteItem,
   getReports,
+  getAnalytics,
 } = require('../controllers/adminController');
 
 // Stats
@@ -30,5 +31,7 @@ router.delete('/listings/:id', protect, adminOnly, adminDeleteItem);
 
 // Reports
 router.get('/reports', protect, adminOnly, getReports);
+// Analytics — all chart data in one call
+router.get('/analytics', protect, adminOnly, getAnalytics);
 
 module.exports = router;

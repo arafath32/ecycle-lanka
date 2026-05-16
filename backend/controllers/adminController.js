@@ -1,6 +1,7 @@
 
 const User = require('../models/User');
 const Item = require('../models/Item');
+const Request = require('../models/Request');
 
 
 const getAllUsers = async (req, res) => {
@@ -243,6 +244,134 @@ const getReports = async (req, res) => {
     res.status(500).json({ message: 'Server error, please try again' });
   }
 };
+// ─────────────────────────────────────────
+// GET ANALYTICS DATA
+// Provides all chart data for the dashboard
+// ─────────────────────────────────────────
+const getAnalytics = async (req, res) => {
+  try {
+    // Run all queries simultaneously using Promise.all for speed
+    const [
+      totalUsers,
+      totalItems,
+      totalRequests,
+      pendingItems,
+      approvedItems,
+      rejectedItems,
+      soldItems,
+
+      // Items grouped by category — for pie chart
+      itemsByCategory,
+
+      // Items grouped by month — for line chart
+      itemsByMonth,
+
+      // Users registered per month — for line chart
+      usersByMonth,
+
+      // Requests grouped by urgency — for bar chart
+      requestsByUrgency,
+
+    ] = await Promise.all([
+      User.countDocuments(),
+      Item.countDocuments(),
+      Request.countDocuments(),
+      Item.countDocuments({ status: 'pending' }),
+      Item.countDocuments({ status: 'approved' }),
+      Item.countDocuments({ status: 'rejected' }),
+      Item.countDocuments({ status: 'sold' }),
+
+      // MongoDB aggregation — groups items by category and counts each
+      Item.aggregate([
+        { $group: { _id: '$category', count: { $sum: 1 } } },
+        { $sort: { count: -1 } }
+      ]),
+
+      // Groups items by year-month — shows activity over time
+      Item.aggregate([
+        {
+          $group: {
+            _id: {
+              year: { $year: '$createdAt' },
+              month: { $month: '$createdAt' }
+            },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { '_id.year': 1, '_id.month': 1 } },
+        { $limit: 12 } // last 12 months
+      ]),
+
+      // Groups users by year-month
+      User.aggregate([
+        {
+          $group: {
+            _id: {
+              year: { $year: '$createdAt' },
+              month: { $month: '$createdAt' }
+            },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { '_id.year': 1, '_id.month': 1 } },
+        { $limit: 12 }
+      ]),
+
+      // Groups requests by urgency level
+      Request.aggregate([
+        { $group: { _id: '$urgency', count: { $sum: 1 } } }
+      ]),
+    ]);
+
+    // Format month data for recharts
+    // Converts { _id: { year: 2026, month: 5 }, count: 3 }
+    // into { month: 'May 2026', items: 3 }
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    const formattedItemsByMonth = itemsByMonth.map(item => ({
+      month: `${monthNames[item._id.month - 1]} ${item._id.year}`,
+      items: item.count
+    }));
+
+    const formattedUsersByMonth = usersByMonth.map(item => ({
+      month: `${monthNames[item._id.month - 1]} ${item._id.year}`,
+      users: item.count
+    }));
+
+    // Format category data for pie chart
+    const formattedByCategory = itemsByCategory.map(item => ({
+      name: item._id || 'Other',
+      value: item.count
+    }));
+
+    // Format urgency data for bar chart
+    const formattedByUrgency = requestsByUrgency.map(item => ({
+      urgency: item._id || 'Medium',
+      count: item.count
+    }));
+
+    res.status(200).json({
+      analytics: {
+        overview: {
+          totalUsers,
+          totalItems,
+          totalRequests,
+          pendingItems,
+          approvedItems,
+          rejectedItems,
+          soldItems,
+        },
+        itemsByCategory: formattedByCategory,
+        itemsByMonth: formattedItemsByMonth,
+        usersByMonth: formattedUsersByMonth,
+        requestsByUrgency: formattedByUrgency,
+      }
+    });
+  } catch (error) {
+    console.log('Analytics error:', error);
+    res.status(500).json({ message: 'Server error, please try again' });
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -254,4 +383,5 @@ module.exports = {
   toggleUserStatus,
   adminDeleteItem,
   getReports,
+  getAnalytics,
 };
