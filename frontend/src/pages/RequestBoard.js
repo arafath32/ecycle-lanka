@@ -15,9 +15,9 @@ const CATEGORIES = [
 ];
 
 const URGENCY_COLORS = {
-  High: { bg: '#fff0f0', color: '#cc0000', label: '🔴 High' },
-  Medium: { bg: '#fff8e1', color: '#e65100', label: '🟡 Medium' },
-  Low: { bg: '#f0fff4', color: '#2e7d32', label: '🟢 Low' },
+  High: { bg: '#ffe5e5', color: '#d10000', label: 'High Priority' },
+  Medium: { bg: '#fff3d6', color: '#c77700', label: 'Medium Priority' },
+  Low: { bg: '#e6fff0', color: '#1b7f3a', label: 'Low Priority' },
 };
 
 const RequestBoard = () => {
@@ -27,7 +27,6 @@ const RequestBoard = () => {
   const [category, setCategory] = useState('');
   const [urgency, setUrgency] = useState('');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchRequests();
   }, [category, urgency]);
@@ -39,10 +38,11 @@ const RequestBoard = () => {
       if (category && category !== 'All Categories') params.category = category;
       if (urgency) params.urgency = urgency;
       if (search) params.search = search;
+
       const data = await getRequests(params);
       setRequests(data.requests);
     } catch (error) {
-      console.log('Error fetching requests:', error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -54,149 +54,193 @@ const RequestBoard = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '2rem 1rem' }}>
+    <div style={{ background: '#f4f6fb', minHeight: '100vh', padding: '2rem' }}>
 
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+      {/* HEADER */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '1rem'
+      }}>
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#1a1a1a', margin: 0 }}>
-            📋 Item Request Board
+          <h1 style={{ margin: 0, fontSize: '30px', fontWeight: 800 }}>
+            Request Board
           </h1>
-          <p style={{ color: '#666', marginTop: '4px' }}>
-            Can't find what you need? Browse buyer requests and contact them directly.
+          <p style={{ margin: 0, color: '#666' }}>
+            Find what people are looking for & connect instantly
           </p>
         </div>
+
         <Link
           to="/post-request"
-          style={{ background: '#16a34a', color: '#fff', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '14px' }}
+          style={{
+            background: 'linear-gradient(135deg,#16a34a,#22c55e)',
+            color: '#fff',
+            padding: '10px 18px',
+            borderRadius: '10px',
+            textDecoration: 'none',
+            fontWeight: 600,
+            boxShadow: '0 8px 20px rgba(34,197,94,0.25)'
+          }}
         >
-          + Post a Request
+          + New Request
         </Link>
       </div>
 
-      {/* Search & Filters */}
-      <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '1.2rem', marginBottom: '1.5rem', border: '1px solid #e5e7eb' }}>
+      {/* FILTER BOX */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        background: '#fff',
+        padding: '1rem',
+        borderRadius: '14px',
+        boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+        marginBottom: '2rem'
+      }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <input
-            type="text"
             placeholder="Search requests..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ flex: 1, minWidth: '200px', padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px' }}
+            style={{
+              flex: 1,
+              padding: '10px',
+              borderRadius: '10px',
+              border: '1px solid #ddd'
+            }}
           />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', background: '#fff' }}
-          >
+
+          <select value={category} onChange={(e) => setCategory(e.target.value)} style={selectStyle}>
             {CATEGORIES.map((c) => (
               <option key={c} value={c === 'All Categories' ? '' : c}>{c}</option>
             ))}
           </select>
-          <select
-            value={urgency}
-            onChange={(e) => setUrgency(e.target.value)}
-            style={{ padding: '10px 14px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', background: '#fff' }}
-          >
-            <option value="">All Urgency</option>
-            <option value="High">🔴 High</option>
-            <option value="Medium">🟡 Medium</option>
-            <option value="Low">🟢 Low</option>
+
+          <select value={urgency} onChange={(e) => setUrgency(e.target.value)} style={selectStyle}>
+            <option value="">All Priority</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
           </select>
-          <button
-            type="submit"
-            style={{ background: '#16a34a', color: '#fff', padding: '10px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: '600' }}
-          >
-            Search
-          </button>
+
+          <button style={searchBtn}>Search</button>
         </form>
       </div>
 
-      {/* Results count */}
-      <p style={{ color: '#666', fontSize: '14px', marginBottom: '1rem' }}>
-        {requests.length} open request{requests.length !== 1 ? 's' : ''} found
-      </p>
+      {/* GRID */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '18px'
+      }}>
+        {loading ? (
+          <p>Loading...</p>
+        ) : requests.length === 0 ? (
+          <p>No requests found</p>
+        ) : (
+          requests.map((req) => {
+            const u = URGENCY_COLORS[req.urgency] || URGENCY_COLORS.Medium;
 
-      {/* Loading */}
-      {loading && (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#666' }}>
-          Loading requests...
-        </div>
-      )}
+            return (
+              <div
+                key={req._id}
+                style={{
+                  background: '#fff',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+                  transition: '0.3s',
+                  cursor: 'pointer'
+                }}
+              >
+                {/* TITLE */}
+                <h3 style={{ margin: '0 0 8px', fontSize: '18px' }}>
+                  {req.title}
+                </h3>
 
-      {/* Empty state */}
-      {!loading && requests.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#666', background: '#f9fafb', borderRadius: '12px' }}>
-          <div style={{ fontSize: '48px', marginBottom: '1rem' }}>📭</div>
-          <h3>No requests found</h3>
-          <p>Be the first to post what you're looking for!</p>
-          <Link to="/post-request" style={{ color: '#16a34a', fontWeight: '600' }}>Post a Request →</Link>
-        </div>
-      )}
+                {/* URGENCY */}
+                <span style={{
+                  background: u.bg,
+                  color: u.color,
+                  padding: '4px 10px',
+                  borderRadius: '999px',
+                  fontSize: '12px',
+                  fontWeight: 600
+                }}>
+                  {u.label}
+                </span>
 
-      {/* Request Cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {requests.map((req) => {
-          const urgencyStyle = URGENCY_COLORS[req.urgency] || URGENCY_COLORS.Medium;
-          return (
-            <div
-              key={req._id}
-              style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.2rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}
-            >
-              <div style={{ flex: 1 }}>
-                {/* Title & urgency */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '6px' }}>
-                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '600', color: '#1a1a1a' }}>
-                    {req.title}
-                  </h3>
-                  <span style={{ background: urgencyStyle.bg, color: urgencyStyle.color, fontSize: '12px', fontWeight: '600', padding: '2px 10px', borderRadius: '999px' }}>
-                    {urgencyStyle.label}
-                  </span>
-                </div>
-
-                {/* Description */}
-                <p style={{ color: '#555', fontSize: '14px', margin: '0 0 10px 0', lineHeight: '1.5' }}>
-                  {req.description}
+                {/* DESC */}
+                <p style={{ fontSize: '13px', color: '#666', marginTop: '10px' }}>
+                  {req.description?.slice(0, 90)}...
                 </p>
 
-                {/* Tags */}
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '13px' }}>
-                  <span style={{ background: '#f0fdf4', color: '#16a34a', padding: '3px 10px', borderRadius: '999px', border: '1px solid #bbf7d0' }}>
-                    {req.category}
-                  </span>
-                  <span style={{ background: '#f0f9ff', color: '#0369a1', padding: '3px 10px', borderRadius: '999px', border: '1px solid #bae6fd' }}>
-                    📍 {req.location}
-                  </span>
-                  <span style={{ background: '#fefce8', color: '#854d0e', padding: '3px 10px', borderRadius: '999px', border: '1px solid #fef08a' }}>
-                    💬 {req.contactMethod}
-                  </span>
-                  <span style={{ color: '#888', fontSize: '12px', alignSelf: 'center' }}>
-                    {new Date(req.createdAt).toLocaleDateString()}
-                  </span>
+                {/* TAGS */}
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
+                  <span style={tag}>{req.category}</span>
+                  <span style={tag}>📍 {req.location}</span>
                 </div>
-              </div>
 
-              {/* Right side — budget & action */}
-              <div style={{ textAlign: 'right', minWidth: '130px' }}>
-                <div style={{ fontSize: '20px', fontWeight: '700', color: '#16a34a', marginBottom: '8px' }}>
-                  Rs. {req.budget.toLocaleString()}
+                {/* BOTTOM */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '14px'
+                }}>
+                  <div style={{ fontWeight: 700, color: '#16a34a' }}>
+                    Rs. {req.budget.toLocaleString()}
+                  </div>
+
+                  <Link to={`/requests/${req._id}`} style={viewBtn}>
+                    View
+                  </Link>
                 </div>
-                <div style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>
-                  Budget
-                </div>
-                <Link
-                  to={`/requests/${req._id}`}
-                  style={{ background: '#16a34a', color: '#fff', padding: '8px 16px', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: '600', display: 'inline-block' }}
-                >
-                  View Details
-                </Link>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );
+};
+
+const selectStyle = {
+  padding: '10px',
+  borderRadius: '10px',
+  border: '1px solid #ddd'
+};
+
+const searchBtn = {
+  padding: '10px 16px',
+  background: '#111',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '10px',
+  cursor: 'pointer'
+};
+
+const tag = {
+  fontSize: '12px',
+  background: '#f3f4f6',
+  padding: '4px 8px',
+  borderRadius: '999px'
+};
+
+const viewBtn = {
+  background: '#16a34a',
+  color: '#fff',
+  padding: '6px 12px',
+  borderRadius: '8px',
+  textDecoration: 'none',
+  fontSize: '12px'
 };
 
 export default RequestBoard;

@@ -1,85 +1,225 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import SearchBar from '../components/SearchBar';
-import ItemCard from '../components/ItemCard';
-import { getItems } from '../services/itemService';
-import { CATEGORIES } from '../utils/constants';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import SearchBar from "../components/SearchBar";
+import ItemCard from "../components/ItemCard";
+import { getItems } from "../services/itemService";
+import { CATEGORIES } from "../utils/constants";
 
-const STATS = [
-  { icon: '♻️', value: '5,000+', label: 'Items Recycled' },
-  { icon: '👥', value: '1,200+', label: 'Registered Users' },
-  { icon: '🌿', value: '12 tons', label: 'Waste Diverted' },
-  { icon: '💰', value: 'Rs. 2M+', label: 'Value Exchanged' },
-];
+// Map category → icon
+const CATEGORY_ICONS = {
+  "Smartphones & Tablets": "📱",
+  "Laptops & Computers": "💻",
+  "TV & Audio": "📺",
+  "Cameras & Photography": "📸",
+  "Gaming": "🎮",
+  "Computer Parts": "🧩",
+  "Printers & Scanners": "🖨️",
+  "Other Electronics": "🔌",
+};
 
 const Home = () => {
   const [recentItems, setRecentItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getItems({ limit: 8, sort: '-createdAt' })
-      .then(data => setRecentItems(data.items || data))
-      .catch(() => {})
+    getItems({ limit: 6, sort: "-createdAt" })
+      .then((data) => setRecentItems(data.items || data))
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div>
-      {/* Hero */}
-      <section style={{
-        background: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #0f766e 100%)',
-        color: '#fff', padding: '5rem 0',
-      }}>
-        <div className="container" style={{ textAlign: 'center', maxWidth: 760 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-            background: 'rgba(255,255,255,0.12)', padding: '0.35rem 1rem',
-            borderRadius: '9999px', fontSize: '0.85rem', marginBottom: '1.5rem',
-          }}>
-            🌿 Sri Lanka's #1 E-Waste Marketplace
-          </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, lineHeight: 1.2, marginBottom: '1rem' }}>
-            Give Electronics a <span style={{ color: '#4ade80' }}>Second Life</span>
-          </h1>
-          <p style={{ fontSize: '1.1rem', opacity: 0.85, marginBottom: '2rem', lineHeight: 1.7 }}>
-            Buy, sell, and recycle electronic waste across Sri Lanka. Reduce landfill waste, recover economic value, and protect our environment.
-          </p>
-          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: '12px', padding: '1.25rem' }}>
-            <SearchBar />
-          </div>
-        </div>
-      </section>
+    <div style={{ background: "#f8fafc", color: "#111827" }}>
 
-      {/* Stats */}
-      <section style={{ background: '#fff', padding: '2.5rem 0', borderBottom: '1px solid #e5e7eb' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
-            {STATS.map(s => (
-              <div key={s.label} style={{ textAlign: 'center', padding: '1rem' }}>
-                <div style={{ fontSize: '1.8rem', marginBottom: '0.25rem' }}>{s.icon}</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16a34a' }}>{s.value}</div>
-                <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* HERO */}
+      <section
+        style={{
+          background: "white",
+          padding: "5rem 1rem",
+          borderBottom: "1px solid #e5e7eb",
+        }}
+      >
+        <div
+          className="container"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: "3rem",
+            alignItems: "center",
+          }}
+        >
 
-      {/* Categories */}
-      <section style={{ padding: '3rem 0' }}>
-        <div className="container">
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem' }}>Browse by Category</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '0.75rem' }}>
-            {CATEGORIES.map(cat => (
-              <Link key={cat} to={`/browse?category=${encodeURIComponent(cat)}`}
-                style={{ textDecoration: 'none' }}>
-                <div className="card" style={{
-                  padding: '1rem', textAlign: 'center', cursor: 'pointer',
-                  transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: 500, color: '#374151',
+          {/* LEFT */}
+          <div>
+            <span
+              style={{
+                display: "inline-block",
+                padding: "6px 12px",
+                borderRadius: "20px",
+                background: "#e8f5e9",
+                color: "#16a34a",
+                fontSize: "13px",
+                fontWeight: "500",
+              }}
+            >
+              ♻ Smart Repair & Recycling Platform
+            </span>
+
+            <h1
+              style={{
+                fontSize: "3rem",
+                fontWeight: "800",
+                marginTop: "18px",
+                lineHeight: "1.1",
+              }}
+            >
+              Repair, Reuse & Recycle{" "}
+              <span style={{ color: "#16a34a" }}>Electronics</span>
+            </h1>
+
+            <p style={{ marginTop: "12px", color: "#6b7280" }}>
+              A smart platform for buying, selling and recycling electronics in Sri Lanka.
+            </p>
+
+            {/* SEARCH */}
+            <div
+              style={{
+                marginTop: "20px",
+                padding: "12px",
+                background: "white",
+                border: "1px solid #e5e7eb",
+                borderRadius: "14px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+              }}
+            >
+              <SearchBar />
+            </div>
+
+            {/* BUTTONS */}
+            <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
+              <Link
+                to="/browse"
+                style={{
+                  padding: "10px 18px",
+                  background: "#16a34a",
+                  color: "white",
+                  borderRadius: "10px",
+                  textDecoration: "none",
+                  fontWeight: "500",
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#16a34a'; e.currentTarget.style.color = '#16a34a'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.color = '#374151'; }}
+              >
+                Explore
+              </Link>
+
+              <Link
+                to="/post-item"
+                style={{
+                  padding: "10px 18px",
+                  background: "white",
+                  border: "1px solid #d1d5db",
+                  color: "#111827",
+                  borderRadius: "10px",
+                  textDecoration: "none",
+                }}
+              >
+                Sell / Recycle
+              </Link>
+            </div>
+          </div>
+
+          {/* RIGHT — MOTHERBOARD + RECYCLE LOGO */}
+          <div style={{ textAlign: "center" }}>
+            <svg
+              width="360"
+              height="360"
+              viewBox="0 0 200 200"
+              style={{
+                filter: "drop-shadow(0 15px 35px rgba(0,0,0,0.12))",
+                animation: "float 3s ease-in-out infinite",
+              }}
+            >
+
+              {/* Outer recycle circle */}
+              <circle
+                cx="100"
+                cy="100"
+                r="85"
+                fill="none"
+                stroke="#16a34a"
+                strokeWidth="3"
+                strokeDasharray="8 5"
+              />
+
+              {/* Motherboard base */}
+              <rect
+                x="60"
+                y="60"
+                width="80"
+                height="80"
+                rx="10"
+                fill="#16a34a"
+              />
+
+              {/* Circuit lines */}
+              <line x1="70" y1="75" x2="130" y2="75" stroke="white" strokeWidth="2" />
+              <line x1="70" y1="90" x2="120" y2="90" stroke="white" strokeWidth="2" />
+              <line x1="70" y1="105" x2="135" y2="105" stroke="white" strokeWidth="2" />
+              <line x1="70" y1="120" x2="115" y2="120" stroke="white" strokeWidth="2" />
+
+              {/* Chip */}
+              <rect x="85" y="85" width="30" height="30" rx="5" fill="#0f172a" />
+
+              {/* Recycle arrows (small corners) */}
+              <path
+                d="M100 25 L115 40 L105 40 C110 50 110 60 100 65 C90 60 90 50 95 40 L85 40 Z"
+                fill="#22c55e"
+              />
+
+              <path
+                d="M100 175 L85 160 L95 160 C90 150 90 140 100 135 C110 140 110 150 105 160 L115 160 Z"
+                fill="#22c55e"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      {/* CATEGORIES */}
+      <section style={{ padding: "4rem 1rem" }}>
+        <div className="container">
+          <h2 style={{ textAlign: "center", marginBottom: "2rem" }}>
+            Browse Categories
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
+              gap: "15px",
+            }}
+          >
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat}
+                to={`/browse?category=${encodeURIComponent(cat)}`}
+                style={{ textDecoration: "none" }}
+              >
+                <div
+                  style={{
+                    background: "white",
+                    border: "1px solid #e5e7eb",
+                    padding: "20px",
+                    borderRadius: "14px",
+                    textAlign: "center",
+                    transition: "0.2s",
+                  }}
                 >
-                  📱 {cat}
+                  <div style={{ fontSize: "2rem" }}>
+                    {CATEGORY_ICONS[cat] || "🔧"}
+                  </div>
+
+                  <p style={{ marginTop: "10px", color: "#111827" }}>
+                    {cat}
+                  </p>
                 </div>
               </Link>
             ))}
@@ -87,39 +227,62 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Recent Listings */}
-      <section style={{ padding: '1rem 0 4rem' }}>
+      {/* RECENT ITEMS */}
+      <section style={{ padding: "4rem 1rem" }}>
         <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Recent Listings</h2>
-            <Link to="/browse" className="btn btn-secondary btn-sm">View All →</Link>
-          </div>
+          <h2 style={{ marginBottom: "20px" }}>Latest Listings</h2>
+
           {loading ? (
-            <p style={{ color: '#6b7280' }}>Loading listings...</p>
-          ) : recentItems.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>📭</div>
-              <p>No listings yet. Be the first to post!</p>
-              <Link to="/post-item" className="btn btn-primary mt-2">Post an Item</Link>
-            </div>
+            <p>Loading...</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.25rem' }}>
-              {recentItems.map(item => <ItemCard key={item._id} item={item} />)}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit,minmax(250px,1fr))",
+                gap: "20px",
+              }}
+            >
+              {recentItems.map((item) => (
+                <ItemCard key={item._id} item={item} />
+              ))}
             </div>
           )}
         </div>
       </section>
 
       {/* CTA */}
-      <section style={{ background: '#052e16', color: '#fff', padding: '4rem 0' }}>
-        <div className="container" style={{ textAlign: 'center', maxWidth: 600 }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem' }}>Ready to recycle your electronics?</h2>
-          <p style={{ opacity: 0.8, marginBottom: '2rem' }}>Join thousands of Sri Lankans already making a difference.</p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/register" className="btn btn-primary btn-lg">Get Started Free</Link>
-            <Link to="/browse" className="btn btn-secondary btn-lg" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.3)' }}>Browse Listings</Link>
-          </div>
-        </div>
+      <section
+        style={{
+          padding: "5rem 1rem",
+          textAlign: "center",
+          background: "#16a34a",
+          color: "white",
+        }}
+      >
+        <h2 style={{ fontSize: "2.2rem" }}>
+          Extend Device Life. Reduce E-Waste.
+        </h2>
+
+        <p style={{ marginTop: "10px", opacity: 0.9 }}>
+          Join Sri Lanka’s smart electronics ecosystem.
+        </p>
+
+        <Link
+          to="/register"
+          style={{
+            marginTop: "20px",
+            display: "inline-block",
+            padding: "10px 20px",
+            background: "white",
+            color: "#16a34a",
+            borderRadius: "10px",
+            textDecoration: "none",
+            fontWeight: "600",
+          }}
+        >
+          Get Started
+        </Link>
       </section>
     </div>
   );
