@@ -75,6 +75,8 @@ app.get('/api/test-protected', protect, (req, res) => {
   res.json({ message: `Hello ${req.user.name}, you are logged in!` });
 });
 
+
+
 // This is a simple test route — when someone visits http://localhost:5000/
 // the server responds with this message. We use this to confirm the server works.
 app.get('/', (req, res) => {
