@@ -143,6 +143,7 @@ const Navbar = () => {
         <div className="desktop-nav" style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           <Link className="nav-link" to="/browse" style={linkStyle("/browse")}>Browse</Link>
           <Link className="nav-link" to="/requests" style={linkStyle("/requests")}>📋 Requests</Link>
+           <Link className="nav-link" to="/impact" style={linkStyle("/impact")}> Impact</Link>
           {isAuthenticated && (
             <>
               <Link className="nav-link" to="/post-item" style={linkStyle("/post-item")}>➕ Sell</Link>
@@ -225,6 +226,7 @@ const Navbar = () => {
               <div className="mobile-menu-divider" />
               <Link to="/login" style={mobileLinkStyle("/login")} onClick={() => setMenuOpen(false)}>Login</Link>
               <Link to="/register" style={{ ...mobileLinkStyle("/register"), background: "#16a34a", color: "#fff" }} onClick={() => setMenuOpen(false)}>Register</Link>
+              <Link className="nav-link" to="/impact" style={linkStyle("/impact")}> Impact</Link>
             </>
           )}
         </div>

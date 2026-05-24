@@ -32,6 +32,8 @@ import ManageUsers from './pages/admin/ManageUsers';
 import ManageListings from './pages/admin/ManageListings';
 import Reports from './pages/admin/Reports';
 
+import ImpactCalculator from './pages/ImpactCalculator';
+
 const App = () => (
   <AuthProvider>
     <Router>
@@ -75,6 +77,7 @@ const App = () => (
                   background: '#16a34a', color: '#fff', borderRadius: '8px', fontWeight: 500 }}>Go Home</a>
               </div>
             } />
+            <Route path="/impact" element={<ImpactCalculator />} />
           </Routes>
         </main>
         <Footer />
