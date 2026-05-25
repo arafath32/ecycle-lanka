@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getRequests } from '../services/requestService';
@@ -27,6 +28,7 @@ const RequestBoard = () => {
   const [category, setCategory] = useState('');
   const [urgency, setUrgency] = useState('');
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchRequests();
   }, [category, urgency]);
