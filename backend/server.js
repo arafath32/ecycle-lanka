@@ -61,7 +61,11 @@ app.use('/api/auth', authRoutes);
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch((err) => console.log('MongoDB connection error:', err));
-
+ res.json({ message: 'Made admin!', email: user.email, role: user.role });
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
   const itemRoutes = require('./routes/itemRoutes');
 app.use('/api/items', itemRoutes);
 
@@ -75,21 +79,7 @@ app.get('/api/test-protected', protect, (req, res) => {
   res.json({ message: `Hello ${req.user.name}, you are logged in!` });
 });
 
-// TEMPORARY ADMIN ROUTE - REMOVE AFTER USE
-app.get('/make-admin/:email', async (req, res) => {
-  try {
-    const User = require('./models/User');
-    const user = await User.findOneAndUpdate(
-      { email: req.params.email },
-      { role: 'admin' },
-      { new: true }
-    );
-    if (!user) return res.json({ message: 'User not found' });
-    res.json({ message: 'Made admin!', email: user.email, role: user.role });
-  } catch (err) {
-    res.json({ error: err.message });
-  }
-});
+   
 
 // This is a simple test route — when someone visits http://localhost:5000/
 // the server responds with this message. We use this to confirm the server works.
