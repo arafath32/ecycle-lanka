@@ -11,7 +11,7 @@ import api from "../../services/api";
 const COLORS = ["#16a34a", "#0ea5e9", "#6366f1", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 const AdminDashboard = () => {
-const [, setStats] = useState(null); // eslint-disable-line no-unused-vars
+  const [stats, setStats] = useState(null);
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);

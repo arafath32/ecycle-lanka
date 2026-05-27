@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { getMyItems, deleteItem, markAsSold } from '../../services/itemService';
@@ -12,14 +11,13 @@ const MyListings = () => {
   const [loading, setLoading] = useState(true);
   const [success, setSuccess] = useState('');
   const location = useLocation();
-// eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (location.state?.success) {
       setSuccess(location.state.success);
       setTimeout(() => setSuccess(''), 4000);
     }
     fetchItems();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchItems = () => {
